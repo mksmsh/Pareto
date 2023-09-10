@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добро пожаловать на YourSite</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'for_users/css/styles.css' %}">
+    <link rel="stylesheet" href="путь/к/bootstrap.min.css">
+
+</head>
+<body>
+<nav class="navbar" role="navigation">
+  <div id="menuToggle">
+
+
+    <ul id="menu">
+      <a href="main"><li>Главная страница</li></a>
+      <a href="profil"><li>Данные профиля</li></a>
+      <a href="product"><li>Аналитика</li></a>
+      <a href="help"><li>Помощь</li></a>
+    </ul>
+  </div>
+</nav>
+    <div class="container-fluid" >
+        <div class="row" >
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>&copy; Анализ по принципу Парето</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{% extends 'for_users/base.html' %}
+
+{% block content %}
+<h1>Профиль пользователя</h1>
+<p class="description">
+  Здесь вы можете добавить магазины, над данными которых необходимо провести анализ. <br><br>
+  Обращаем ваше внимание, что для трех маркетплейсов есть три разные формы.<br><br>
+  Вы также можете просматривать список добавленных товаров (если они есть) и в случае необходимости
+  удалить.
+</p>
+
+<h3>Список магазинов</h3>
+{% if shops %}
+  <ul>
+    {% for shop_item in shops %}
+      <li>
+        <p>Магазин: {{ shop_item.nameSH }} ({{ shop_item.mp }}, {{ shop_item.md }})</p>
+        <form class="nob" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="shop_id" value="{{ shop_item.id }}">
+          <button type="submit" name="action" value="delete">Удалить</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  Пока нет доступных магазинов
+{% endif %}
+
+<h1>Добавьте магазин</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Создать магазин</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Отслеживание изменений в поле выбора маркетплейса
+        $('#id_mp').change(function () {
+            var mp_id = $(this).val();
+            // Отправка AJAX-запроса для получения доступных моделей работы (и других параметров) для выбранного маркетплейса
+            $.ajax({
+                url: '/get_models/',  // Укажите URL-маршрут для обработки AJAX-запроса
+                data: {'mp_id': mp_id},
+                dataType: 'json',
+                success: function (data) {
+                    // Обновление полей формы с новыми данными
+                    $('#id_md').empty();
+                    $.each(data.models, function (key, value) {
+                        $('#id_md').append($('<option>', {
+                            value: key,
+                            text: value
+                        }));
+                    });
+                    // Другие поля также можно обновить аналогичным образом
+                }
+            });
+        });
+    });
+</script>
+
+
+{% endblock %}

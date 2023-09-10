@@ -1,0 +1,70 @@
+{% extends 'for_users/base.html' %}
+
+{% block content %}
+<h1>Анализ по принципу Парето</h1>
+<p>На этой странице вы сможете анализировать свои товары и продажи. <br>
+
+{% if not selected_shop %}
+<h2>Выберите магазин:</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Выбрать магазин</button>
+</form>
+{% endif %}
+
+{% if selected_shop %}
+<p><h3>Вы выбрали магазин: {{ selected_shop }}</h3>
+<h4>Информация о магазине {{ selected_shop }}</h4>
+Название: {{ selected_shop }}<br>
+Модель работы: {{ selected_shop.md }}<br>
+Способ отгрузки: {{ selected_shop.moe }}<br>
+Тариф перевода: {{ selected_shop.tt }}<br>
+<h1>Скачайте файл товаров</h1>
+Загрузите данные о ваших товарах
+<form method="post" enctype="multipart/form-data" name="product_form" id="product_form">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="product">
+    {{ form_product.as_p }}
+    <button type="submit">Загрузить файл</button>
+</form>
+
+<h1>Анализ продаж</h1>
+Скачайте файл продаж для того, чтобы провести анализ</p>
+
+<form method="post" enctype="multipart/form-data" name="sale_form" id="sale_form">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="sale">
+    {{ form_sale.as_p }}
+    <button type="submit">Upload</button>
+</form>
+{% endif %}
+
+{% if sale_pareto %}
+<table>
+  <thead>
+    <tr>
+      <th>Категория</th>
+      <th>Процент от общей суммы (цена)</th>
+      <th>Процент от общей суммы (прибыль)</th>
+      <th>Общий процент (цена)</th>
+      <th>Общий процент (прибыль)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in sale_pareto %}
+      <tr>
+        <td>{{ item.category }}</td>
+        <td>{{ item.group_procent_price }}</td>
+        <td>{{ item.group_procent_profit }}</td>
+        <td>{{ item.all_procent_price }}</td>
+        <td>{{ item.all_procent_profit }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'for_users/css/styles.css' %}">
+    <title>Главная страница</title>
+</head>
+<body class="content">
+    <nav>
+        <a href="{% url 'login' %}">Авторизация</a>
+        <a href="{% url 'singup' %}">Регистрация</a>
+    </nav>
+
+    <h1>Добро пожаловать на наш сайт!</h1>
+
+</body>
+</html>

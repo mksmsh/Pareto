@@ -1,0 +1,25 @@
+{% extends "for_users/base.html" %}
+
+{% block content %}
+<h2>Загрузите файл категорий МП Яндекс.Маркете</h2>
+<form method="post" enctype="multipart/form-data" name="yandex_form" id="yandex_form">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="yandex">
+    {{ form_yandex.as_p }}
+    <button type="submit">Upload</button>
+</form>
+<h2>Загрузите файл категорий МП Озон</h2>
+<form method="post" enctype="multipart/form-data" name="ozone_form" id="ozone_form">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="ozone">
+    {{ form_ozone.as_p }}
+    <button type="submit">Upload</button>
+</form>
+<h2>Загрузите файл категорий МП СберМегаМаркет</h2>
+<form method="post" enctype="multipart/form-data" name="sbr_form" id="sbr_form">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="sbr">
+    {{ form_sbr.as_p }}
+    <button type="submit">Upload</button>
+</form>
+{% endblock%}

@@ -1,0 +1,10 @@
+{% extends "for_users/base.html" %}
+
+{% block content %}
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Добро пожаловать на YourSite</h1>
+</div>
+<div class="container">
+    <p>Привет, {{ user.username }}! Здесь твои конкуренты.</p>
+</div>
+{% endblock %}
