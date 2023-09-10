@@ -3,9 +3,10 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import SaleForm, ShopForm, ShopSelectionForm, ExcelUploadForm
 from openpyxl import load_workbook
-from for_admin.models import MarketPlace, ModelWork, MethodofExport, TariffTranslate, CategoryYM
+from for_admin.models import MarketPlace, ModelWork, MethodofExport, TariffTranslate, CategoryYM, CategoryOZ
 from .models import Shop, Sale, Product
-from .until.algoritm_cattegory import SaleAnalizeCategory
+from .until.algoritm_cattegory import SaleAnalizeCategory, ProductAnalizeCategory
+from .until.algoritme_product import SaleAnalizeProduct, ProductAnalizeProduct
 
 
 def main(request):
@@ -49,6 +50,9 @@ def product(request):
 def load_shop_data(request, shop_id):
     selected_shop = Shop.objects.get(id=shop_id)
     sale_pareto = []
+    sale_product_pareto= []
+    product_pareto = []
+    product_product_pareto = []
 
     if request.method == 'POST':
         form_product = ExcelUploadForm(request.POST, request.FILES)
@@ -57,17 +61,20 @@ def load_shop_data(request, shop_id):
             form_type = request.POST['form_type']
             if form_type == 'sale':
                 if form_sale.is_valid():
-                    excel_file = request.FILES['excel_file']
-                    wb = load_workbook(excel_file)
-                    sheet = wb.worksheets[1]
 
                     if selected_shop.mp.nameMP == 'Яндекс.Маркет':
+
+                        excel_file = request.FILES['excel_file']
+                        wb = load_workbook(excel_file)
+                        sheet = wb.worksheets[1]
+
                         for row in sheet.iter_rows(min_row=9, values_only=True):
                             number_shop = row[8]
                             sku_p = row[11]
                             name_p = row[12]
                             count = row[13]
                             price = row[16]
+
                             full_price = 0
                             count = float(count)
                             category = ''
@@ -97,16 +104,60 @@ def load_shop_data(request, shop_id):
                                         profit=profit, category=category, shop=selected_shop)
                             sale.save()
 
+
+                    elif selected_shop.mp.nameMP == 'Озон':
+
+                        excel_file = request.FILES['excel_file']
+                        wb = load_workbook(excel_file)
+                        sheet = wb.worksheets[0]
+
+                        for row in sheet.iter_rows(min_row=2, values_only=True):
+                            number_shop = row[0]
+                            sku_p = row[9]
+                            name_p = row[8]
+                            count = row[13]
+                            price = row[11]
+                            price = float(price)
+                            full_price = 0
+                            count = float(count)
+                            category = ''
+
+                            tt_category = 0
+
+                            from_product = Product.objects.filter(shop=selected_shop)
+                            from_category = CategoryOZ.objects.all()
+
+                            for found_name in from_product:
+                                if name_p == found_name.nameP:
+                                    category = found_name.category
+                                    full_price = found_name.price
+
+                            for found_cost in from_category:
+                                if category == found_cost.name_category:
+                                    if selected_shop.md.nameMW == 'FBO':
+                                        tt_category = full_price * found_cost.cost_fbo
+
+                                    else:
+                                        tt_category = full_price * found_cost.cost_fbs
+
+                            profit = price - selected_shop.moe.cost - tt_category - price * selected_shop.tt.cost
+
+                            sale = Sale(number_shop=number_shop, sku_p=sku_p, name_p=name_p, count=count, price=price,
+                                        profit=profit, category=category, shop=selected_shop)
+                            sale.save()
+
                     sale_pareto = SaleAnalizeCategory(selected_shop)
+                    sale_product_pareto = SaleAnalizeProduct(selected_shop)
 
 
             if form_type == 'product':
                 if form_product.is_valid():
-                    excel_file = request.FILES['excel_file']
-                    wb = load_workbook(excel_file)
-                    sheet = wb.worksheets[1]
 
                     if selected_shop.mp.nameMP == 'Яндекс.Маркет':
+
+                        excel_file = request.FILES['excel_file']
+                        wb = load_workbook(excel_file)
+                        sheet = wb.worksheets[1]
 
                         for row in sheet.iter_rows(min_row=4, values_only=True):
                             sku = row[2]
@@ -131,8 +182,44 @@ def load_shop_data(request, shop_id):
                             if price != None:
                                 profit = price - selected_shop.moe.cost - price * selected_shop.tt.cost - price * tt_category
 
+
                             product = Product(sku=sku, nameP=nameP, article=article, price=price, category=category, shop=selected_shop, profit=profit)
                             product.save()
+
+                    if selected_shop.mp.nameMP == 'Озон':
+
+                        excel_file = request.FILES['excel_file']
+                        wb = load_workbook(excel_file)
+                        sheet = wb.worksheets[0]
+
+                        for row in sheet.iter_rows(min_row=4, values_only=True):
+                            sku = row[9]
+                            nameP = row[2]
+                            article = row[1]
+                            price = row[3]
+                            category = row[48]
+
+                            tt_category = 0
+                            profit = 0
+                            categoryOZ = CategoryOZ.objects.all()
+
+                            for category_obj in categoryOZ:
+
+                                if category == category_obj.name_category:
+                                    if selected_shop.md.nameMW == 'FBO':
+                                        tt_category = category_obj.cost_fby
+                                    else:
+                                        tt_category = category_obj.cost_fbs
+
+                            if price != None:
+                                profit = price - selected_shop.moe.cost - price * selected_shop.tt.cost - price * tt_category
+
+
+                            product = Product(sku=sku, nameP=nameP, article=article, price=price, category=category, shop=selected_shop, profit=profit)
+                            product.save()
+
+                    product_pareto = ProductAnalizeCategory(selected_shop)
+                    product_product_pareto = ProductAnalizeProduct(selected_shop)
 
 
 
@@ -141,7 +228,7 @@ def load_shop_data(request, shop_id):
         form_sale = ExcelUploadForm()
         form_product = ExcelUploadForm()
 
-    return render(request, 'for_users/product.html', {'sale_pareto': sale_pareto, 'selected_shop': selected_shop, 'form_sale': form_sale, 'form_product': form_product}, )
+    return render(request, 'for_users/product.html', {'product_product_pareto': product_product_pareto, 'sale_product_pareto': sale_product_pareto, 'product_pareto': product_pareto, 'sale_pareto': sale_pareto, 'selected_shop': selected_shop, 'form_sale': form_sale, 'form_product': form_product}, )
 
 
 def clients(request):

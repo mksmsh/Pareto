@@ -28,6 +28,132 @@
     {{ form_product.as_p }}
     <button type="submit">Загрузить файл</button>
 </form>
+{% if product_pareto %}
+<h1>"Рентабельность по категории товаров"</h1>
+<table>
+    <thead>
+        <th>Категория</th>
+        <th>Продажа</th>
+        <th>Доход</th>
+        <th>Рентабельность</th>
+    </thead>
+    <tbody>
+    {% for item in product_pareto.0 %}
+      <tr>
+        <td>{{ item.category }}</td>
+        <td>{{ item.sum_d }}</td>
+        <td>{{ item.sum_p }}</td>
+        <td>{{ item.profitability}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+
+    <tfoot>
+        <th>Всего</th>
+        <th>{{ product_pareto.1 }}</th>
+        <th>{{ product_pareto.2 }}</th>
+    </tfoot>
+
+</table>
+
+<h1>Результат анализа по категориям товара</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Категория</th>
+      <th>Процент от общей суммы (цена)</th>
+      <th>Процент от общей суммы (прибыль)</th>
+      <th>Общий процент (цена)</th>
+      <th>Общий процент (прибыль)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in product_pareto.0 %}
+
+        {% if item.all_procent_profit <= 80 %}
+            <tr class="p_tr">
+                <td>{{ item.category }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>{{ item.category }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+       {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+<h1>Рентабельность по товару</h1>
+<table>
+    <thead>
+        <th>Категория</th>
+        <th>Продажа</th>
+        <th>Доход</th>
+        <th>Рентабельность</th>
+    </thead>
+    <tbody>
+    {% for item in product_product_pareto.0 %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.sum_d }}</td>
+        <td>{{ item.sum_p }}</td>
+        <td>{{ item.profitability}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+
+    <tfoot>
+        <th>Всего</th>
+        <th>{{ product_pareto.1 }}</th>
+        <th>{{ product_pareto.2 }}</th>
+    </tfoot>
+
+</table>
+
+<h1>Результат анализа по товару</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Наименование</th>
+      <th>Процент от общей суммы (цена)</th>
+      <th>Процент от общей суммы (прибыль)</th>
+      <th>Общий процент (цена)</th>
+      <th>Общий процент (прибыль)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in product_product_pareto.0 %}
+     {% if item.all_procent_profit <= 80 %}
+            <tr class="p_tr">
+                <td>{{ item.name }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+       {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endif %}
+
 
 <h1>Анализ продаж</h1>
 Скачайте файл продаж для того, чтобы провести анализ</p>
@@ -40,7 +166,37 @@
 </form>
 {% endif %}
 
+<h1>Результат анализа продаж</h1>
 {% if sale_pareto %}
+<h1>"Рентабельность по категориям проданных товаров"</h1>
+<table>
+    <thead>
+        <th>Категория</th>
+        <th>Продажа</th>
+        <th>Доход</th>
+        <th>Рентабельность</th>
+    </thead>
+    <tbody>
+    {% for item in sale_pareto.0 %}
+
+      <tr>
+        <td>{{ item.category }}</td>
+        <td>{{ item.sum_d }}</td>
+        <td>{{ item.sum_p }}</td>
+        <td>{{ item.profitability}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+
+    <tfoot>
+        <th>Всего</th>
+        <th>{{ sale_pareto.1 }}</th>
+        <th>{{ sale_pareto.2 }}</th>
+    </tfoot>
+
+</table>
+
+<h1>Результат анализа продаж по категориям товаров</h1>
 <table>
   <thead>
     <tr>
@@ -52,19 +208,89 @@
     </tr>
   </thead>
   <tbody>
-    {% for item in sale_pareto %}
-      <tr>
-        <td>{{ item.category }}</td>
-        <td>{{ item.group_procent_price }}</td>
-        <td>{{ item.group_procent_profit }}</td>
-        <td>{{ item.all_procent_price }}</td>
-        <td>{{ item.all_procent_profit }}</td>
-      </tr>
+    {% for item in sale_pareto.0 %}
+        {% if item.all_procent_profit <= 80 %}
+            <tr class="p_tr">
+                <td>{{ item.category }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>{{ item.category }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+       {% endif %}
     {% endfor %}
   </tbody>
 </table>
 
-{% endif %}
+<h1>"Рентабельность по проданным товарам"</h1>
+<table>
+    <thead>
+        <th>Категория</th>
+        <th>Продажа</th>
+        <th>Доход</th>
+        <th>Рентабельность</th>
+    </thead>
+    <tbody>
+    {% for item in sale_product_pareto.0 %}
 
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.sum_d }}</td>
+        <td>{{ item.sum_p }}</td>
+        <td>{{ item.profitability}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+
+    <tfoot>
+        <th>Всего</th>
+        <th>{{ sale_pareto.1 }}</th>
+        <th>{{ sale_pareto.2 }}</th>
+    </tfoot>
+
+</table>
+
+<h1>Результат анализа продаж по проданным товарам</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Категория</th>
+      <th>Процент от общей суммы (цена)</th>
+      <th>Процент от общей суммы (прибыль)</th>
+      <th>Общий процент (цена)</th>
+      <th>Общий процент (прибыль)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in sale_product_pareto.0 %}
+        {% if item.all_procent_profit <= 80 %}
+            <tr class="p_tr">
+                <td>{{ item.name }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.group_procent_price }}</td>
+                <td>{{ item.group_procent_profit }}</td>
+                <td>{{ item.all_procent_price }}</td>
+                <td>{{ item.all_procent_profit }}</td>
+            </tr>
+       {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 
 {% endblock %}

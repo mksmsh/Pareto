@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MarketPlace, ModelWork, MethodofExport, TariffTranslate, Category, CategoryYM, CategoryOZ, CategorySBR
+from .models import MarketPlace, ModelWork, MethodofExport, TariffTranslate, Category, CategoryYM, EnouthTariffYM, CategoryOZ, CategorySBR
 
 
 class MethodofExportAdmin(admin.ModelAdmin):
@@ -26,5 +26,6 @@ admin.site.register(MethodofExport, MethodofExportAdmin)
 admin.site.register(TariffTranslate)
 admin.site.register(Category)
 admin.site.register(CategoryYM)
+admin.site.register(EnouthTariffYM)
 admin.site.register(CategoryOZ)
 admin.site.register(CategorySBR)

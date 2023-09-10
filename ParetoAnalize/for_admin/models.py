@@ -96,6 +96,25 @@ class CategoryYM(models.Model):
         verbose_name_plural = "Категории Яндекс.Маркет"
 
 
+class EnouthTariffYM(models.Model):
+
+    mw = models.ForeignKey(ModelWork, on_delete=models.CASCADE, verbose_name='Доступно для модели', to_field='nameMW')
+    name = models.CharField(verbose_name='Тариф за', max_length=50)
+    condition = models.CharField(verbose_name='Условие', max_length=50)
+    w = models.FloatField(verbose_name=' Вес товара')
+    sums = models.FloatField(verbose_name='Сумма сторон')
+    procent = models.FloatField(verbose_name='Процент комиссии')
+    min = models.FloatField(verbose_name='Не меньше')
+    max = models.FloatField(verbose_name='Не больше')
+    cost_else = models.FloatField(verbose_name='Стоимость при невыполнении условия')
+
+    class Meta:
+        verbose_name = "Тариф Яндекс.Маркет"
+        verbose_name_plural = "Другие тарифы Яндекс.Маркет"
+
+    def __str__(self):
+        return self.name
+
 class CategoryOZ(models.Model):
     name_category = models.CharField(max_length=60, verbose_name='Имя категории')
 
@@ -123,5 +142,3 @@ class CategorySBR(models.Model):
         verbose_name = "Категория СберМегаМаркет"
         verbose_name_plural = "Категории СберМегаМаркет"
 
-
-#class EnotherTariffYM (models.Model):
